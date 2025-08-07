@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Dashboard</h2>
+    
+    <div class="summary">
+        <div class="card">
+            <h3>Total Balance</h3>
+            <p class="amount {% if balance >= 0 %}positive{% else %}negative{% endif %}">
+                ₹{{ "%.2f"|format(balance) }}
+            </p>
+        </div>
+        
+        <div class="card">
+            <h3>Total Income</h3>
+            <p class="amount positive">₹{{ "%.2f"|format(total_income) }}</p>
+        </div>
+        
+        <div class="card">
+            <h3>Total Expenses</h3>
+            <p class="amount negative">₹{{ "%.2f"|format(total_expense) }}</p>
+        </div>
+    </div>
+    
+    <div class="recent-transactions">
+        <h3>Recent Transactions</h3>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Description</th>
+            </tr>
+            {% for t in transactions %}
+            <tr>
+                <td>{{ t['date'] }}</td>
+                <td class="{{ t['type'] }}">{{ t['type']|capitalize }}</td>
+                <td>{{ t['category'] }}</td>
+                <td class="{{ t['type'] }}">₹{{ "%.2f"|format(t['amount']) }}</td>
+                <td>{{ t['description'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    
+    <div class="goals">
+        <h3>Financial Goals</h3>
+        {% if goals %}
+            <div class="goal-list">
+                {% for goal in goals %}
+                <div class="goal">
+                    <h4>{{ goal['name'] }}</h4>
+                    <p>Target: ₹{{ "%.2f"|format(goal['target_amount']) }}</p>
+                    <p>Current: ₹{{ "%.2f"|format(goal['current_amount']) }}</p>
+                    <p>Deadline: {{ goal['deadline'] }}</p>
+                    <progress value="{{ goal['current_amount'] }}" max="{{ goal['target_amount'] }}"></progress>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No goals set yet. <a href="{{ url_for('manage_goals') }}">Create your first goal!</a></p>
+        {% endif %}
+    </div>
+{% endblock %}
